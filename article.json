@@ -1,0 +1,15 @@
+{
+  "title": "Using Request",
+  "description": "Making HTTP request easy by using Mikeal's request module.",
+  "date": "Fri Aug 13 2012 03:08:50 GMT-0700 (PST)",
+  "tags": ["http", "client"],
+  "authors": [
+    { "name": "Pedro Teixeira",
+		  "url": "https://github.com/pgte"
+    }
+  ],
+  "difficulty": 6,
+  "categories": [
+    ["HTTP", "Client"]
+  ]
+}
