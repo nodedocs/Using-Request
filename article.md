@@ -8,47 +8,49 @@ You can install mikeal/request locally by doing:
 
 Then you can import the module:
 
-    var request = require('request');
+```javascript
+var request = require('request');
+````
 
 And use it to make requests. But first let's code this test HTTP server:
 
-    require('http').createServer(function(req, res) {
+```javascript
+require('http').createServer(function(req, res) {
 
-      function printBack() {
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(JSON.stringify({
-          url: req.url,
-          method: req.method,
-          headers: req.headers
-        }));
-      }
+function printBack() {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end(JSON.stringify({
+      url: req.url,
+      method: req.method,
+      headers: req.headers
+    }));
+}
 
-      switch (req.url) {
-        
-        case '/redirect':
-          res.writeHead(301, {"Location": '/'});
-          res.end();
-          break;
-        
-        case '/print/body':
-          req.setEncoding('utf8');
-          var body = '';
-          req.on('data', function(d) {
-            body += d;
-          });
-          req.on('end', function() {
-            res.end(JSON.stringify(body));
-          });
-          break;
-        
-        default:
-          printBack();
-          break;
+switch (req.url) {
 
-      }
-    }).listen(4001);
-
-**server.js**
+    case '/redirect':
+      res.writeHead(301, {"Location": '/'});
+      res.end();
+      break;
+    
+    case '/print/body':
+      req.setEncoding('utf8');
+      var body = '';
+      req.on('data', function(d) {
+        body += d;
+      });
+      req.on('end', function() {
+        res.end(JSON.stringify(body));
+      });
+      break;
+    
+    default:
+      printBack();
+      break;
+    
+    }
+}).listen(4001);
+```
 
 If we save this snnippet to file `server.js` and run it:
 
@@ -56,43 +58,45 @@ If we save this snnippet to file `server.js` and run it:
 
 We can then make a simple call to this server:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    request(
-      'http://localhost:4001/abc/def',
-      function(err, res, body) {
-        if (err) { throw err; }
-        console.log(inspect({
-          err: err,
-          res: {
-            statusCode: res.statusCode
-          },
-          body: body
-        }))
-      });
+request(
+  'http://localhost:4001/abc/def',
+  function(err, res, body) {
+    if (err) { throw err; }
+    console.log(inspect({
+      err: err,
+      res: {
+        statusCode: res.statusCode
+      },
+      body: body
+    }))
+  });
+```
 
 **simple.js**
 
 We can also observe that request follows redirects:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    request(
-      'http://localhost:4001/redirect',
-      function(err, res, body) {
-        if (err) { throw err; }
-        console.log(inspect({
-          err: err,
-          res: {
-            statusCode: res.statusCode
-          },
-          body: body
-        }))
-      });
-
-**follow.js**
+request(
+  'http://localhost:4001/redirect',
+  function(err, res, body) {
+    if (err) { throw err; }
+    console.log(inspect({
+      err: err,
+      res: {
+        statusCode: res.statusCode
+      },
+      body: body
+    }))
+  });
+```
 
 You can perform HTTP methods other than GET. You can use the following shortcuts:
 
@@ -103,189 +107,188 @@ You can perform HTTP methods other than GET. You can use the following shortcuts
 
 Here is an example using a POST request:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    request.post(
-      'http://localhost:4001/abc/def',
-      function(err, res, body) {
-        if (err) { throw err; }
-        console.log(inspect({
-          err: err,
-          res: {
-            statusCode: res.statusCode
-          },
-          body: body
-        }))
-      });
-
-**post.js**
+request.post(
+  'http://localhost:4001/abc/def',
+  function(err, res, body) {
+    if (err) { throw err; }
+    console.log(inspect({
+      err: err,
+      res: {
+        statusCode: res.statusCode
+      },
+      body: body
+    }))
+  });
+```
 
 Or, more generically, request accepts an options object instead of a string URL:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    var options = {
-      url: 'http://localhost:4001/abc/def',
-      method: 'PUT'
-    };
+var options = {
+  url: 'http://localhost:4001/abc/def',
+  method: 'PUT'
+};
 
-    request(options, function(err, res, body) {
-      if (err) { throw err; }
-      console.log(inspect({
-        err: err,
-        res: {
-          statusCode: res.statusCode
-        },
-        body: body
-      }))
-    });
-
-**options.js**
+request(options, function(err, res, body) {
+  if (err) { throw err; }
+  console.log(inspect({
+    err: err,
+    res: {
+      statusCode: res.statusCode
+    },
+    body: body
+  }))
+});
+```
 
 You can also send some custom headers:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    var options = {
-      url: 'http://localhost:4001/abc/def',
-      method: 'PUT',
-      headers: {
-        'X-My-Header': 'value'
-      }
-    };
+var options = {
+  url: 'http://localhost:4001/abc/def',
+  method: 'PUT',
+  headers: {
+    'X-My-Header': 'value'
+  }
+};
 
-    request(options, function(err, res, body) {
-      if (err) { throw err; }
-      console.log(inspect({
-        err: err,
-        res: {
-          statusCode: res.statusCode,
-          headers: res.headers
-        },
-        body: JSON.parse(body)
-      }))
-    });
-
-**headers.js**
+request(options, function(err, res, body) {
+  if (err) { throw err; }
+  console.log(inspect({
+    err: err,
+    res: {
+      statusCode: res.statusCode,
+      headers: res.headers
+    },
+    body: JSON.parse(body)
+  }))
+});
+```
 
 You can also encode the body. You can use form-encoding:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    body = {
-      a: 1,
-      b: 2
-    };
+body = {
+  a: 1,
+  b: 2
+};
 
-    var options = {
-      url: 'http://localhost:4001/print/body',
-      form: body
-    };
+var options = {
+  url: 'http://localhost:4001/print/body',
+  form: body
+};
 
-    request(options, function(err, res, body) {
-      if (err) { throw err; }
-      console.log(inspect({
-        err: err,
-        res: {
-          statusCode: res.statusCode,
-          headers: res.headers
-        },
-        body: JSON.parse(body)
-      }))
-    });
-
-**form.js**
+request(options, function(err, res, body) {
+  if (err) { throw err; }
+  console.log(inspect({
+    err: err,
+    res: {
+      statusCode: res.statusCode,
+      headers: res.headers
+    },
+    body: JSON.parse(body)
+  }))
+});
+```
 
 Or JSON encoding:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    body = {
-      a: 1,
-      b: 2
-    };
+body = {
+  a: 1,
+  b: 2
+};
 
-    var options = {
-      url: 'http://localhost:4001/print/body',
-      json: body
-    };
+var options = {
+  url: 'http://localhost:4001/print/body',
+  json: body
+};
 
-    request(options, function(err, res, body) {
-      if (err) { throw err; }
-      console.log(inspect({
-        err: err,
-        res: {
-          statusCode: res.statusCode,
-          headers: res.headers
-        },
-        body: JSON.parse(body)
-      }))
-    });
-
-**json.js**
+request(options, function(err, res, body) {
+  if (err) { throw err; }
+  console.log(inspect({
+    err: err,
+    res: {
+      statusCode: res.statusCode,
+      headers: res.headers
+    },
+    body: JSON.parse(body)
+  }))
+});
+```
 
 You can also send a query string in the URL:
 
-    var request = require('request');
-    var inspect = require('util').inspect;
+```javascript
+var request = require('request');
+var inspect = require('util').inspect;
 
-    body = {
-      a: 1,
-      b: 2
-    };
+body = {
+  a: 1,
+  b: 2
+};
 
-    var options = {
-      url: 'http://localhost:4001/print/body',
-      qs: body
-    };
+var options = {
+  url: 'http://localhost:4001/print/body',
+  qs: body
+};
 
-    request(options, function(err, res, body) {
-      if (err) { throw err; }
-      console.log(inspect({
-        err: err,
-        res: {
-          statusCode: res.statusCode,
-          headers: res.headers
-        },
-        body: JSON.parse(body)
-      }))
-    });
-
-**querystring.js**
-
+request(options, function(err, res, body) {
+  if (err) { throw err; }
+  console.log(inspect({
+    err: err,
+    res: {
+      statusCode: res.statusCode,
+      headers: res.headers
+    },
+    body: JSON.parse(body)
+  }))
+});
+```
 
 ## Buffering and Events
 
 If you provide a callback, request will buffer the response body. If you don't want that to happen, you can attach to the returned event emitter like this:
 
-    var request = require('request');
+```javascript
+var request = require('request');
 
-    var req = request('http://localhost:4001/');
+var req = request('http://localhost:4001/');
 
-    req.on('response', function(res) {
-      console.log('we have a response', {res: {
-        statusCode: res.statusCode,
-        headers: res.headers
-      }});
+req.on('response', function(res) {
+  console.log('we have a response', {res: {
+    statusCode: res.statusCode,
+    headers: res.headers
+  }});
 
-      res.setEncoding('utf8');
+  res.setEncoding('utf8');
 
-      res.on('data', function(data) {
-        console.log('response data:', data);
-      });
+  res.on('data', function(data) {
+    console.log('response data:', data);
+  });
 
-      res.on('end', function() {
-        console.log('response ended');
-      });
+  res.on('end', function() {
+    console.log('response ended');
+  });
 
-    });
-
-**events**
+});
+```
 
 ## Piping
 
@@ -293,12 +296,13 @@ A request object is a duplex stream, which means you can pipe in data or pipe it
 
 For instance, you can proxy a request to an HTTP Serer response like this:
 
-    var request = require('request');
+```javascript
+var request = require('request');
 
-    require('http').createServer(function(req, res) {
-      request('https://www.google.pt/images/srpr/logo3w.png').pipe(res);
-    }).listen(4001);
-**reverse_proxy.js**
+require('http').createServer(function(req, res) {
+  request('https://www.google.pt/images/srpr/logo3w.png').pipe(res);
+}).listen(4001);
+```
 
 You can save this into a file named "reverse_proxy.js" and then point your browser to http://localhost:4001/.
 
@@ -324,13 +328,15 @@ All of these headers are injected by request based on the response from the Goog
 
 You can also pipe into a request:
 
-    var request = require('request');
+```javascript
+var request = require('request');
 
-    var target = request.put('http://localhost:4001/');
+var target = request.put('http://localhost:4001/');
 
-    request('https://www.google.pt/images/srpr/logo3w.png')
-      .pipe(target)
-      .pipe(process.stdout);
+request('https://www.google.pt/images/srpr/logo3w.png')
+  .pipe(target)
+  .pipe(process.stdout);
+```
 
 This pipes the google doodle into our server and pipes the response into out process standard output.
 
@@ -340,20 +346,20 @@ Node reutilizes the TCP connections to the same server by keeping a connection p
 
 Let's test this effect by having a server that takes one second to respond:
 
-    var delay = process.argv[2] && parseInt(process.argv[2], 10) || 1000;
+```javascript
+var delay = process.argv[2] && parseInt(process.argv[2], 10) || 1000;
 
-    var pendingRequests = 0;
+var pendingRequests = 0;
 
-    require('http').createServer(function(req, res) {
-      pendingRequests ++;
-      console.log('have %d pending requests', pendingRequests);
-      setTimeout(function() {
-        res.end();
-        pendingRequests --;
-      }, delay);
-    }).listen(4001);
-
-**delayed_server.js**
+require('http').createServer(function(req, res) {
+  pendingRequests ++;
+  console.log('have %d pending requests', pendingRequests);
+  setTimeout(function() {
+    res.end();
+    pendingRequests --;
+  }, delay);
+}).listen(4001);
+```
 
 Save the server code into a file named "delayed_server.js" and start it up:
 
@@ -361,49 +367,51 @@ Save the server code into a file named "delayed_server.js" and start it up:
 
 Then we are ready to call our delayed server:
 
-    var request = require('request');
+```javascript
+var request = require('request');
 
-    var maxRequests = 100;
+var maxRequests = 100;
 
-    for( var i = 0; i < maxRequests; i ++) {
-      request('http://localhost:4001/', function(err) {
-        if (err) { throw err; }
-      });
-    }
-
-**queued_5.js**
+for( var i = 0; i < maxRequests; i ++) {
+  request('http://localhost:4001/', function(err) {
+    if (err) { throw err; }
+  });
+}
+```
 
 This script launches 100 parallel requests into our server. If you fire this up you will notice that our server only has at most 5 pending requests at a time.
 
 You can change this by changing the request.pool.maxSockets variable. Let's change it to 10:
 
-    var request = require('request');
+```javascript
+var request = require('request');
 
-    var maxRequests = 100;
+var maxRequests = 100;
 
-    for( var i = 0; i < maxRequests; i ++) {
-      var req = request('http://localhost:4001/', function(err) {
-        if (err) { throw err; }
-      });
-      req.pool.maxSockets = 10;
-    }
-
-**queued_10.js**
+for( var i = 0; i < maxRequests; i ++) {
+  var req = request('http://localhost:4001/', function(err) {
+    if (err) { throw err; }
+  });
+  req.pool.maxSockets = 10;
+}
+```
 
 ## Cookies
 
 Request also keeps the cookies in between requests in a global cookie jar. If you want to you can provide a specific cookie jar to be used on a request by passing in a `.jar` property like this:
 
-    var request = require('request');
+```javascript
+var request = require('request');
 
-    var cookieJar = request.jar();
+var cookieJar = request.jar();
 
-    var options = {
-      url: 'http://google.com',
-      jar: cookieJar
-    };
+var options = {
+  url: 'http://google.com',
+  jar: cookieJar
+};
 
-    request(options, callback);
+request(options, callback);
+```
 
 If you want ot turn off the cookie memory you can pass `jar: false` as an option.
 
